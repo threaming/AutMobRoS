@@ -31,9 +31,8 @@ public:
         {
             sleep(1.0);
             log.info() << cs.e.getOut().getSignal();
-            log.info() << cs.M.getOut().getSignal();
+            log.info() << cs.q1d.getOut().getSignal();
             log.info() << cs.invMotMod.getOut().getSignal();
-            log.info() << cs.qd_dummy.getOut().getSignal();
         }
         return 0;
     }

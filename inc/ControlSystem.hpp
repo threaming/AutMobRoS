@@ -26,10 +26,10 @@ public:
     Sum<> e;
     Gain<> Kp;
     D<> ed;
+    D<> q1d;
     Gain<> Kd;
     Sum<> qdd_c;
     Gain<> M;
-    Constant<> qd_dummy;
     InvMotMod<> invMotMod;
     PeripheralOutput<> motor2;
 
