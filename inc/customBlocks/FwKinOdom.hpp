@@ -52,7 +52,7 @@ public:
             double phi = GRR.getIn(2).getSignal().getValue();
             double cphi = std::cos(phi);
             double sphi = std::sin(phi);
-            eeros::math::Matrix<3,3> M = {cphi, sphi, 0.0, -sphi, cphi, 0.0, 0.0, 0.0, 1.0};
+            eeros::math::Matrix<3,3> M = {cphi, -sphi, 0.0, sphi, cphi, 0.0, 0.0, 0.0, 1.0};
             eeros::math::Vector3 v = {GRR.getIn(0).getSignal().getValue(), GRR.getIn(1).getSignal().getValue(), 0.0};
             eeros::math::Vector3 out = M*v;
             GRR.getOut().getSignal().setValue(out.getSubMatrix<2,1>(0, 0));
