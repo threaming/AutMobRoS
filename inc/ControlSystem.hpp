@@ -10,6 +10,9 @@
 #include <eeros/control/DeMux.hpp>
 #include <eeros/control/Constant.hpp>
 #include "customBlocks/InvKin.hpp"
+#include "customBlocks/InvMotMod.hpp"
+#include <eeros/control/D.hpp>
+#include <eeros/control/PeripheralOutput.hpp>
 
 using namespace eeros::control;
 
@@ -20,11 +23,15 @@ public:
 
     // Define Blocks
     PeripheralInput<> E1, E2;
-    Mux<2> E;
-    D<eeros::math::Vector2> Ed;
-    FwKinOdom fwKinOdom;
-    Constant<> RvRx, omegaR;
-    InvKin invKin;
+    Sum<> e;
+    Gain<> Kp;
+    D<> ed;
+    Gain<> Kd;
+    Sum<> qdd_c;
+    Gain<> M;
+    Constant<> qd_dummy;
+    InvMotMod<> invMotMod;
+    PeripheralOutput<> motor2;
 
     TimeDomain timedomain;
 };

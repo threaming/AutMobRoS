@@ -109,12 +109,10 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
 
     slStartingUp.setLevelAction([&](SafetyContext *privateContext) {
         cs.timedomain.start();
-        cs.fwKinOdom.enable();
         privateContext->triggerEvent(systemStarted);
     });
 
     slEmergency.setLevelAction([&](SafetyContext *privateContext) {
-        cs.fwKinOdom.disable();
     });
 
     slEmergencyBreaking.setLevelAction([&](SafetyContext *privateContext) {
@@ -123,7 +121,6 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
     });
 
     slSystemOn.setLevelAction([&, dt](SafetyContext *privateContext) {
-        cs.fwKinOdom.enable();
         if (slSystemOn.getNofActivations()*dt >= 1)   // wait 1 sec
         {
             privateContext->triggerEvent(powerOn);
@@ -131,7 +128,6 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
     });
 
     slMotorPowerOn.setLevelAction([&, dt](SafetyContext *privateContext) {
-        cs.fwKinOdom.enable();
         if (slMotorPowerOn.getNofActivations()*dt >= 5)   // wait 5 sec
         {
             privateContext->triggerEvent(startMoving);
@@ -139,7 +135,6 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
     });
 
     slSystemMoving.setLevelAction([&, dt](SafetyContext *privateContext) {
-        cs.fwKinOdom.enable();
         if (slSystemMoving.getNofActivations()*dt >= 5)   // wait 5 sec
         {
             privateContext->triggerEvent(stopMoving);
