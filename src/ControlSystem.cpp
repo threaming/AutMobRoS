@@ -3,65 +3,54 @@
 ControlSystem::ControlSystem(double dt)
     : E1("enc1"),
       E2("enc2"),
-      Kp(1.0 / dt / 4.6 / 0.7 * 1.0 / dt / 4.6 / 0.7),
-      Kd(2.0 * 0.7 / dt / 4.6 / 0.7),
-      M(3441.0 / 104.0 * 3441.0 / 104.0 * 6.8e-8),
-      invMotMod(0.1, 21.2, 3441.0/104.0, 8.44e-3, 8),
-      motor2("motor2"),
+      controller(1.0/dt, 0.7, 2.3, 3441.0 / 104.0 * 3441.0 / 104.0 * 6.8e-8),
+      invMotMod(0.1, 21.2, 3441.0/104.0, 8.44e-3, 8.0),
+      M1("motor1"),
+      M2("motor2"),
       timedomain("Main time domain", dt, true)
 {
     // Name all blocks
     E1.setName("E1");
     E2.setName("E2");
-    e.setName("e");
-    Kp.setName("Kp");
-    ed.setName("ed");
-    q1d.setName("q1d");
-    Kd.setName("Kd");
-    qdd_c.setName("qdd_c");
-    M.setName("M");
+    E_d.setName("E_d");
+    E.setName("E");
+    controller.setName("controller");
     invMotMod.setName("invMotMod");
-    motor2.setName("motor2");
+    U.setName("U");
+    M1.setName("M1");
+    M2.setName("M2");
 
     // Name all signals
     E1.getOut().getSignal().setName("q1 [rad]");
     E2.getOut().getSignal().setName("q2 [rad]");
-    e.getOut().getSignal().setName("e [rad]");
-    Kp.getOut().getSignal().setName("qdd_cp [rad/s^2]");
-    ed.getOut().getSignal().setName("ed [rad/s]");
-    q1d.getOut().getSignal().setName("q1d [rad/s]");
-    Kd.getOut().getSignal().setName("qdd_cd [rad/s^2]");
-    qdd_c.getOut().getSignal().setName("qdd_c [rad/s^2]");
-    M.getOut().getSignal().setName("Q1 [Nm]");
-    invMotMod.getOut().getSignal().setName("U1 [V]");
+    E_d.getOut().getSignal().setName("q_d [rad]");
+    E.getOut().getSignal().setName("q [rad]");
+    U.getOut(0).getSignal().setName("U1 [V]");
+    U.getOut(1).getSignal().setName("U2 [V]");
 
     // Connect signals
-    e.getIn(0).connect(E2.getOut());
-    e.getIn(1).connect(E1.getOut());
-    e.negateInput(1);
-    Kp.getIn().connect(e.getOut());
-    ed.getIn().connect(e.getOut());
-    q1d.getIn().connect(E1.getOut());
-    Kd.getIn().connect(ed.getOut());
-    qdd_c.getIn(0).connect(Kp.getOut());
-    qdd_c.getIn(1).connect(Kd.getOut());
-    M.getIn().connect(qdd_c.getOut());
-    invMotMod.getIn(0).connect(M.getOut());
-    invMotMod.getIn(1).connect(q1d.getOut());
-    motor2.getIn().connect(invMotMod.getOut());
+    E_d.getIn(0).connect(E2.getOut());
+    E_d.getIn(1).connect(E1.getOut());
+    E.getIn(0).connect(E1.getOut());
+    E.getIn(1).connect(E2.getOut());
+    controller.getIn(0).connect(E_d.getOut());
+    controller.getIn(1).connect(E.getOut());
+    invMotMod.getIn(0).connect(controller.getOut(0));
+    invMotMod.getIn(1).connect(controller.getOut(1));
+    U.getIn().connect(invMotMod.getOut());
+    M1.getIn().connect(U.getOut(0));
+    M2.getIn().connect(U.getOut(1));
 
     // Add blocks to timedomain
     timedomain.addBlock(E1);
     timedomain.addBlock(E2);
-    timedomain.addBlock(e);
-    timedomain.addBlock(Kp);
-    timedomain.addBlock(ed);
-    timedomain.addBlock(Kd);
-    timedomain.addBlock(qdd_c);
-    timedomain.addBlock(M);
-    timedomain.addBlock(q1d);
+    timedomain.addBlock(E_d);
+    timedomain.addBlock(E);
+    timedomain.addBlock(controller);
     timedomain.addBlock(invMotMod);
-    timedomain.addBlock(motor2);
+    timedomain.addBlock(U);
+    timedomain.addBlock(M1);
+    timedomain.addBlock(M2);
 
     // Add timedomain to executor
     eeros::Executor::instance().add(timedomain);

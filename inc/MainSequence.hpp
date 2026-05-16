@@ -30,9 +30,8 @@ public:
         while (eeros::sequencer::Sequencer::running)
         {
             sleep(1.0);
-            log.info() << cs.e.getOut().getSignal();
-            log.info() << cs.q1d.getOut().getSignal();
-            log.info() << cs.invMotMod.getOut().getSignal();
+            log.info() << cs.controller.getOut(0).getSignal();
+            log.info() << cs.controller.getOut(1).getSignal();
         }
         return 0;
     }
