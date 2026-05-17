@@ -30,8 +30,8 @@ public:
         while (eeros::sequencer::Sequencer::running)
         {
             sleep(1.0);
-            log.info() << cs.controller.getOut(0).getSignal();
-            log.info() << cs.controller.getOut(1).getSignal();
+            log.info() << cs.VelCtrl.getOut(0).getSignal();
+            log.info() << cs.VelCtrl.getOut(1).getSignal();
         }
         return 0;
     }
